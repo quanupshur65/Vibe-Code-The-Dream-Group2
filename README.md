@@ -1,24 +1,4 @@
 # Vibe-Code-The-Dream-Group2
-albright_sports_manager/
-│
-├── main.py                      # Entry point for running the app
-├── README.md                    # Project specification
-├── requirements.txt             # Dependencies (pygame, flask, etc.)
-│
-├── models/                      # Core data classes
-│   ├── player.py
-│   ├── team.py
-│   └── game.py
-│
-├── services/                    # Logic and interaction layer
-│   ├── data_manager.py
-│   └── stats_calculator.py
-│
-├── ui/                          # Pygame (or GUI) components
-│   ├── dashboard.py
-│   └── player_form.py
-│
-└── assets/                      # Images, icons, etc.
 
 Albright College Sports Team Manager
 Group Members: Darwin, Quan, Kendall
