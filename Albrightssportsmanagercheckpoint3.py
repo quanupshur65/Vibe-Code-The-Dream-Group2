@@ -1,85 +1,7 @@
 import pygame
-
-class Player:
-    def __init__(self, name, position, stats=None, injured=False):
-        self.name = name
-        self.position = position
-        self.stats = stats if stats else {}
-        self.injured = injured
-
-    def __str__(self):
-        status = "Injured" if self.injured else "Healthy"
-        return f"{self.name} - {self.position} ({status})"
-class Team:
-    def __init__(self, name):
-        self.name = name
-        self.players = []
-
-    def add_player(self, player):
-        self.players.append(player)
-
-    def remove_player(self, player_name):
-        self.players = [p for p in self.players if p.name != player_name]
-
-    def get_roster(self):
-        return self.players
-class Game:
-    def __init__(self, opponent, date):
-        self.opponent = opponent
-        self.date = date
-
-    def __str__(self):
-        return f"Game vs {self.opponent} on {self.date}"
-class DataManager:
-    def save(self, team):
-        # Placeholder for future file/database saving
-        pass
-
-    def load(self):
-    # Placeholder for future loading
-        pass
-
-class Menu:
-    def __init__(self, screen):
-        self.screen = screen
-        self.font = pygame.font.SysFont(None, 36)
-
-    def draw(self):
-        self.screen.fill((0, 0, 0))
-        text = self.font.render("Albright Sports Team Manager", True, (255, 255, 255))
-        self.screen.blit(text, (50, 50))
-        pygame.display.flip()
-
-def main():
-    pygame.init()
-    screen = pygame.display.set_mode((600, 400))
-    pygame.display.set_caption("Albright Sports Team Manager")
-
-    team = Team("Albright Lions")
-    team.add_player(Player("John Smith", "Forward"))
-    team.add_player(Player("Mike Johnson", "Goalie", injured=True))
-
-    menu = Menu(screen)
-
-    running = True
-    clock = pygame.time.Clock()
-
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
-        menu.draw()
-        clock.tick(60)
-
-    pygame.quit()
-
-if __name__ == "__main__":
-    main()
-import pygame
 import sys
 
-# --- Models ---
+# ---------- Models ----------
 
 class Player:
     def __init__(self, name, position, stats=None, injured=False):
@@ -88,107 +10,199 @@ class Player:
         self.stats = stats if stats else {}
         self.injured = injured
 
-    def __str__(self):
-        return f"{self.name} ({self.position}) - {'Injured' if self.injured else 'Healthy'}"
+    def toggle_injury(self):
+        self.injured = not self.injured
+
+    def status(self):
+        return "Injured" if self.injured else "Healthy"
+
 
 class Team:
-    def __init__(self, name):
+    def __init__(self, name, team_stats=None):
         self.name = name
         self.players = []
+        self.team_stats = team_stats if team_stats else {}
 
     def add_player(self, p):
         self.players.append(p)
 
-    def remove_player(self, name):
-        self.players = [p for p in self.players if p.name != name]
-
-    def get_players(self):
-        return self.players
 
 class Game:
     def __init__(self, opponent, date):
         self.opponent = opponent
         self.date = date
 
-# --- Sample Data ---
 
-basketball = Team("Albright Basketball")
-basketball.add_player(Player("Joey Callahan", "G", {"points": 12}, injured=False))
-basketball.add_player(Player("Jeremiah Stanton", "G", {"points": 10}, injured=False))
-basketball.add_player(Player("Qadir Mitchell", "G", {"points": 8}, injured=True))
-basketball.add_player(Player("Miles Smith", "G", {"points": 7}))
-basketball.add_player(Player("Akhir Keys", "G", {"points": 5}))
+# ---------- Data ----------
 
-football = Team("Albright Football")
-football.add_player(Player("Alden Stickler", "WR", {"receptions": 15}, False))
-football.add_player(Player("Matthew Creeger", "WR", {"receptions": 12}))
-football.add_player(Player("Logan Rothberg", "WR", {"yards": 250}))
-football.add_player(Player("Darien Osmun", "LB", {"tackles": 32}))
-football.add_player(Player("Daniel Farley", "P", {"punts": 18}))
+basketball = Team(
+    "Albright Basketball",
+    team_stats={"PPG": 74, "Record": "14-11", "Conference": "MAC"}
+)
 
-schedule = [
-    Game("Misericordia", "Sep 13"),
-    Game("Widener", "Sep 27"),
-    Game("FDU-Florham", "Oct 25")
+basketball.players = [
+    Player("Joey Callahan", "G", {"Points": 12, "Assists": 4}),
+    Player("Jeremiah Stanton", "G", {"Points": 10, "Assists": 3}),
+    Player("Qadir Mitchell", "G", {"Points": 8}, injured=True),
+    Player("Miles Smith", "G", {"Points": 7}),
+    Player("Akhir Keys", "G", {"Points": 5}),
 ]
 
-# --- Pygame UI Setup ---
+basketball_schedule = [
+    Game("Penn St. Berks", "Nov 7"),
+    Game("Ursinus", "Nov 11"),
+    Game("Saint Joseph (CT)", "Nov 15"),
+    Game("Farmingdale State", "Nov 16"),
+    Game("Franklin and Marshall", "Nov 20"),
+    Game("Swarthmore", "Nov 25"),
+    Game("Lebanon Valley", "Dec 3"),
+    Game("Stevens", "Dec 6"),
+    Game("Kean", "Dec 16"),
+    Game("Pitt-Greensburg", "Dec 29"),
+    Game("Stockton", "Dec 30"),
+    Game("Hood", "Jan 7"),
+    Game("Eastern", "Jan 10"),
+    Game("Messiah", "Jan 14"),
+    Game("Alvernia", "Jan 17"),
+    Game("Widener", "Jan 21"),
+    Game("York", "Jan 24"),
+    Game("Stevenson", "Jan 29"),
+    Game("Eastern", "Jan 31"),
+    Game("Messiah", "Feb 4"),
+    Game("Alvernia", "Feb 7"),
+    Game("Widener", "Feb 11"),
+    Game("Hood", "Feb 14"),
+
+]
+
+football = Team(
+    "Albright Football",
+    team_stats={"Record": "5-5", "Points/Game": 28, "Conference": "MAC"}
+)
+
+football.players = [
+    Player("Alden Stickler", "WR", {"Receptions": 15, "Yards": 220}),
+    Player("Matthew Creeger", "WR", {"Receptions": 12, "Yards": 180}),
+    Player("Logan Rothberg", "WR", {"Yards": 250}),
+    Player("Darien Osmun", "LB", {"Tackles": 32}),
+    Player("Daniel Farley", "P", {"Punts": 18}),
+]
+
+football_schedule = [
+    Game("Gallaudet", "Sep 5"),           
+    Game("Misericordia", "Sep 13"),      
+    Game("Delaware Valley", "Sep 20"),    
+    Game("Widener", "Sep 27"),           
+    Game("Alvernia", "Oct 11"),           
+    Game("Eastern", "Oct 18"),            
+    Game("FDU-Florham", "Oct 25"),        
+    Game("King's", "Nov 1"),             
+    Game("Stevenson", "Nov 8"),           
+    Game("Lebanon Valley", "Nov 15")      
+]
+
+# ---------- Pygame Setup ----------
 
 pygame.init()
-screen = pygame.display.set_mode((800, 600))
+screen = pygame.display.set_mode((900, 650))
 pygame.display.set_caption("Albright Sports Team Manager")
-font = pygame.font.SysFont(None, 28)
+font = pygame.font.SysFont(None, 26)
 
-current_team = basketball  # toggle between basketball / football
+current_team = basketball
+current_schedule = basketball_schedule
+selected_index = 0
+show_stats = False
 
-def draw_text(surface, text, x, y, color=(255, 255, 255)):
-    txt = font.render(text, True, color)
-    surface.blit(txt, (x, y))
+# ---------- Helpers ----------
+
+def draw_text(text, x, y, color=(255, 255, 255)):
+    screen.blit(font.render(text, True, color), (x, y))
+
 
 def draw_menu():
-    screen.fill((25, 25, 51))
-    draw_text(screen, f"Team: {current_team.name}", 50, 20)
+    screen.fill((20, 20, 45))
 
-    y = 60
-    for p in current_team.get_players():
-        draw_text(screen, f"- {p}", 50, y)
-        y += 30
+    draw_text(f"Team: {current_team.name}", 40, 20)
 
-    draw_text(screen, "Schedule:", 50, 300)
-    y_sched = 340
-    for g in schedule:
-        draw_text(screen, f"{g.date} vs {g.opponent}", 70, y_sched)
-        y_sched += 25
+    # Team stats
+    y = 55
+    for k, v in current_team.team_stats.items():
+        draw_text(f"{k}: {v}", 40, y, (180, 180, 255))
+        y += 22
 
-    draw_text(screen, "[TAB] Switch Team  [A] Add Player  [R] Remove Player", 50, 500)
+    # Players
+    y = 140
+    for i, p in enumerate(current_team.players):
+        color = (255, 255, 0) if i == selected_index else (255, 255, 255)
+        draw_text(
+            f"{p.name} ({p.position}) - {p.status()}",
+            40, y, color
+        )
+        y += 28
+
+    # Schedule
+    draw_text("Schedule:", 450, 20)
+    y = 55
+    for g in current_schedule:
+        draw_text(f"{g.date} vs {g.opponent}", 450, y)
+        y += 24
+
+    # Player stats panel
+    if show_stats:
+        p = current_team.players[selected_index]
+        draw_text("Player Stats:", 450, 300, (0, 255, 200))
+        y = 330
+        for k, v in p.stats.items():
+            draw_text(f"{k}: {v}", 450, y)
+            y += 24
+
+    draw_text(
+        "[TAB] Switch Team  [↑↓] Select Player  [A] Toggle Injury  [R] Show Stats",
+        40, 610
+    )
+
     pygame.display.flip()
 
-def add_player():
-    current_team.add_player(Player("New Player", "Pos"))
 
-def remove_player():
-    if current_team.players:
-        current_team.remove_player(current_team.players[-1].name)
+# ---------- Main Loop ----------
 
-# --- Loop ---
-
-running = True
 clock = pygame.time.Clock()
+running = True
 
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_TAB:
-                current_team = football if current_team == basketball else basketball
-            if event.key == pygame.K_a:
-                add_player()
-            if event.key == pygame.K_r:
-                remove_player()
+                if current_team == basketball:
+                    current_team = football
+                    current_schedule = football_schedule
+                else:
+                    current_team = basketball
+                    current_schedule = basketball_schedule
+                selected_index = 0
+                show_stats = False
+
+            elif event.key == pygame.K_UP:
+                selected_index = max(0, selected_index - 1)
+
+            elif event.key == pygame.K_DOWN:
+                selected_index = min(
+                    len(current_team.players) - 1,
+                    selected_index + 1
+                )
+
+            elif event.key == pygame.K_a:
+                current_team.players[selected_index].toggle_injury()
+
+            elif event.key == pygame.K_r:
+                show_stats = not show_stats
 
     draw_menu()
     clock.tick(30)
 
 pygame.quit()
 sys.exit()
+
